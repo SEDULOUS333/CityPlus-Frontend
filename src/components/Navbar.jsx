@@ -8,18 +8,31 @@ export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  useEffect(() => {
+  const syncAuthState = () => {
     const token = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
     setLoggedIn(!!token);
     setIsAdmin(role === "admin");
-  }, [location.pathname]);
+  };
+
+  useEffect(() => {
+    // Initial load
+    syncAuthState();
+
+    // Listen for login/logout updates
+    window.addEventListener("authChange", syncAuthState);
+    window.addEventListener("storage", syncAuthState);
+
+    return () => {
+      window.removeEventListener("authChange", syncAuthState);
+      window.removeEventListener("storage", syncAuthState);
+    };
+  }, []);
 
   const handleLogout = () => {
     localStorage.clear();
-    setLoggedIn(false);
-    setIsAdmin(false);
+    window.dispatchEvent(new Event("authChange"));
     navigate("/login");
   };
 
@@ -29,7 +42,7 @@ export default function Navbar() {
       : "text-gray-600 hover:text-gray-900 font-semibold";
 
   return (
-    <header className="bg-white shadow-lg hover:shadow-xl transition-shadow border border-gray-100 sticky top-0 z-50">
+    <header className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <div
@@ -44,9 +57,11 @@ export default function Navbar() {
           <Link to="/" className={linkClass("/")}>
             Home
           </Link>
+
           <Link to="/report" className={linkClass("/report")}>
             Report Issue
           </Link>
+
           <Link to="/map" className={linkClass("/map")}>
             Map
           </Link>
@@ -68,14 +83,14 @@ export default function Navbar() {
         {!loggedIn ? (
           <Link
             to="/login"
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold"
           >
             Login
           </Link>
         ) : (
           <button
             onClick={handleLogout}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold"
           >
             Logout
           </button>
