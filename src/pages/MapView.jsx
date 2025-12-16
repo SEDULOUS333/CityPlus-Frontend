@@ -1,12 +1,9 @@
-// src/pages/MapView.jsx
-
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { getReports } from "../services/api";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// Fix default marker icons (Vite issue)
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -45,7 +42,7 @@ export default function MapView() {
 
   return (
     <div className="max-w-5xl mx-auto mt-6 p-4">
-      <div className="bg-white shadow-xl rounded-xl p-4 border border-gray-200">
+      <div className="bg-white shadow-xl rounded-xl p-4 border">
         <h1 className="text-2xl font-bold mb-4 text-center">
           Reported Issues Map
         </h1>
@@ -56,10 +53,7 @@ export default function MapView() {
             zoom={13}
             className="w-full h-full"
           >
-            <TileLayer
-              attribution="&copy; OpenStreetMap contributors"
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
             {reports.map((report) => (
               <Marker
@@ -70,26 +64,16 @@ export default function MapView() {
                 ]}
               >
                 <Popup>
-                  <div className="text-sm leading-tight">
-                    <p className="font-semibold uppercase text-blue-600">
+                  <div className="text-sm">
+                    <p className="font-semibold text-blue-600">
                       TYPE: {report.type}
                     </p>
 
-                    <p className="mt-1">{report.description}</p>
-
-                    {report.address && (
-                      <p className="text-xs text-gray-600 mt-1">
-                        <strong>Address:</strong> {report.address}
-                      </p>
-                    )}
-
-                    <p className="text-xs text-gray-500 mt-1">
-                      Status: {report.status}
-                    </p>
+                    <p>{report.description}</p>
 
                     {report.imageUrl && (
                       <img
-                        src={`http://localhost:5000${report.imageUrl}`}
+                        src={report.imageUrl}
                         alt="Issue"
                         className="mt-2 w-40 rounded-md"
                       />

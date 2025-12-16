@@ -1,5 +1,3 @@
-// src/pages/AdminPanel.jsx
-
 import { useEffect, useState } from "react";
 import { getReports, updateReportStatus, deleteReport } from "../services/api";
 
@@ -56,22 +54,18 @@ export default function AdminPanel() {
             key={r._id}
             className="bg-white p-4 rounded-lg shadow border relative"
           >
-            
-
             <h3 className="font-bold text-lg">{r.description}</h3>
 
             {r.imageUrl && (
               <img
-                src={`http://localhost:5000${r.imageUrl}`}
+                src={r.imageUrl}
                 className="w-full h-40 object-cover rounded mt-2"
                 alt="issue"
               />
             )}
 
             <p><strong>Type:</strong> {r.type}</p>
-
             {r.address && <p><strong>Address:</strong> {r.address}</p>}
-
             <p><strong>Status:</strong> {r.status}</p>
 
             <div className="mt-3 flex gap-3">
@@ -94,6 +88,7 @@ export default function AdminPanel() {
                 Resolved
               </button>
             </div>
+
             <button
               onClick={() => handleDelete(r._id)}
               className="absolute bottom-4 right-4 bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded"
